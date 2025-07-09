@@ -62,8 +62,14 @@ public class Store {
     }
     public double buy(String ISBN, int quantity, String emailAddress, String address){
         double amountPaid=0.0;
-        Book book=this.findISBN(ISBN);
-        amountPaid=book.buyBook(quantity,emailAddress,address);
+        try{
+            Book book=this.findISBN(ISBN);
+            amountPaid=book.buyBook(quantity,emailAddress,address);
+            System.out.println("Amount paid: "+amountPaid);
+
+        }catch (IllegalStateException e){
+            System.out.println(e.getMessage());
+        }
         return amountPaid;
     }
 }
