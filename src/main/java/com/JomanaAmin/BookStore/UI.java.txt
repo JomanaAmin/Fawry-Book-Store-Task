@@ -1,0 +1,203 @@
+package com.JomanaAmin.BookStore;
+
+import java.util.Scanner;
+
+public class UI {
+    private Store store;
+    private Scanner scanner=new Scanner(System.in);
+    public UI(Store store){
+        this.store=store;
+        this.menu();
+    }
+    public void menu() {
+        System.out.println("Choose an option: ");
+        System.out.println("1. Add book");
+        System.out.println("2. Remove outdated books ");
+        System.out.println("3. View books available ");
+        System.out.println("4. Purchase book ");
+        String input;
+        int choice;
+        boolean invalid=true;
+        while (invalid) {
+            try {
+                input = scanner.nextLine().trim();
+                choice = Integer.parseInt(input);
+                invalid=false;
+                switch (choice){
+                    case 1:
+                        this.addBook();
+                        break;
+                    case 2:
+                        this.removeOutdatedBooks();
+                        break;
+                    case 3:
+                        this.viewBooks();
+                        break;
+                    case 4:
+                        this.purchaseBook();
+                        break;
+                    default:
+                        invalid=true;
+                        System.out.println("Please enter a valid choice.");
+                }
+
+
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number.");
+                invalid=true;
+            }
+        }
+    }
+
+    private void purchaseBook() {
+        String ISBN;
+        boolean invalid=false;
+        int quantity=0;
+        String fileType="";
+        String emailAddress="";
+        String address="";
+        System.out.println("Enter book ISBN: ");
+        ISBN=scanner.nextLine().trim();
+        System.out.println("ERRORRR1");
+
+        Book book;
+        while(invalid){
+            System.out.println("ERRORRR2");
+
+            try{
+                System.out.println("ERRORR3R");
+
+                book=store.findISBN(ISBN);
+                switch (book.getType()){
+                    case BookType.PAPER:
+                        System.out.println("Enter quantity: ");
+                        quantity=Integer.parseInt(scanner.nextLine().trim());
+                        System.out.println("Enter address: ");
+                        address=scanner.nextLine();
+                        break;
+                    case BookType.EBOOK:
+                        System.out.println("Enter address: ");
+                        address=scanner.nextLine();
+                        System.out.println("Enter file type: ");
+                        fileType=scanner.nextLine();
+                        break;
+                    case BookType.DEMOBOOK:
+                        break;
+                }
+                invalid=false;
+            }catch (IllegalStateException e){
+                System.out.println(e.getMessage());
+            }catch (NumberFormatException e){
+                System.out.println("Enter a valid quantity");
+            }
+        }
+        System.out.println("Amount Paid: "+store.buy(ISBN,quantity,emailAddress,address));
+//        int option;
+//        System.out.println("Do you want to...");
+//        System.out.println("1. Go back to Main Menu");
+//        System.out.println("2. Exit");
+//        invalid=true;
+//        while (invalid){
+//            try{
+//                option=Integer.parseInt(scanner.nextLine().trim());
+//                invalid=false;
+//                switch (option){
+//                    case 1:
+//                        this.menu();
+//                        break;
+//                    case 2:
+//                        ;
+//                        break;
+//                    default:
+//                        System.out.println("Enter a valid option.");
+//
+//                }
+//            }catch (NumberFormatException e){
+//                System.out.println("Enter a valid option.");
+//
+//            }
+//        }
+        menu();
+    }
+
+    private void viewBooks() {
+
+        store.displayBooks(store.getInventory());
+    }
+
+    private void removeOutdatedBooks() {
+        int years;
+        boolean invalid = true;
+        while (invalid){
+            System.out.println("Enter specified number of years");
+            try{
+                years=Integer.parseInt(scanner.nextLine().trim());
+                System.out.println("Books that passed "+  years +" years have been removed. ");
+                store.remove(years);
+                invalid=false;
+            }catch(NumberFormatException e){
+                System.out.println("Enter a valid number of years");
+            }
+        }
+    }
+
+    private void addBook() {
+        boolean invalid=true;
+        String ISBN;
+        String title;
+        int yearPublished;
+        String input;
+        int choice;
+        double price=0;
+        int stock=0;
+        BookType type;
+        String fileType="";
+        System.out.println("Enter book type: ");
+        System.out.println("1. Paper Book");
+        System.out.println("2. E-Book ");
+        System.out.println("3. Demo Book ");
+        while (invalid) {
+            try {
+                input = scanner.nextLine().trim();
+                choice = Integer.parseInt(input);
+                invalid=false;
+                System.out.println("Enter book ISBN: ");
+                ISBN= scanner.nextLine().trim();
+                System.out.println("Enter book title: ");
+                title= scanner.nextLine().trim();
+                System.out.println("Enter year published: ");
+                yearPublished= Integer.parseInt(scanner.nextLine().trim());
+                switch (choice){
+                    case 1:
+                        type=BookType.PAPER;
+
+                        System.out.println("Enter book price: ");
+                        price= Integer.parseInt(scanner.nextLine().trim());
+                        System.out.println("Enter number in stock: ");
+                        stock= Integer.parseInt(scanner.nextLine().trim());
+                        store.add(type,ISBN,title,yearPublished,price,stock,fileType);
+
+                        break;
+                    case 2:
+                        type=BookType.EBOOK;
+                        System.out.println("Enter book price: ");
+                        price= Integer.parseInt(scanner.nextLine().trim());
+                        System.out.println("Enter file type: ");
+                        fileType= scanner.nextLine().trim();
+                        store.add(type,ISBN,title,yearPublished,price,stock,fileType);
+                        break;
+                    case 3:
+                        type=BookType.DEMOBOOK;
+                        store.add(type,ISBN,title,yearPublished,price,stock,fileType);
+                        break;
+                    default:
+                        invalid=true;
+                        System.out.println("Please enter a choice.");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Please enter a valid number.");
+            }
+        }
+
+    }
+}
